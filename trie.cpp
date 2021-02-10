@@ -4,20 +4,62 @@
 #include <cctype>
 #include <stack>
 #include <utility>
+#include <cstring>
 
 Trie::Trie():end_of_word(false){
+
+  for (int i=0; i<ALPHABET_SIZE; i++){
+      roots[i] = NULL;
+  }
+
+
     // TODO: There's a little more initialization to do here, but what?
 }
 
 Trie::Trie(Trie const& other):end_of_word(other.end_of_word){
+    this->roots = new Trie();
+    for (int i=0; i<ALPHABET_SIZE; i++){
+        if (other.roots[i] != NULL){
+            this->roots[i] = other.roots[i];
+        }
+        else{
+            this->roots[i] = NULL;
+        }
+    }
+
     // TODO: Remember to do a deep copy of your structure!
 }
 
 Trie::~Trie(){
+
+    for (int i=0; i<ALPHABET_SIZE; i++){
+        delete roots[i];
+    }
+
     // TODO: Clean up your children!
 }
 
 Trie& Trie::operator=(Trie const& other){
+    if (this == &other){
+        return *this;
+    }
+    //delete roots
+    for (int i=0; i<ALPHABET_SIZE; i++){
+        delete roots[i];
+    }
+    
+    
+    this->roots = new Trie(other);
+    for (int i=0; i<ALPHABET_SIZE;i++){
+        if (other.roots[i] != NULL){
+            this->roots[i] = other.roots[i];
+        }
+        else{
+            this->roots[i] = NULL;
+        }
+    }
+
+
     // TODO: Remember to do a deep copy of your structure!
 
     return *this;
@@ -25,6 +67,41 @@ Trie& Trie::operator=(Trie const& other){
 
 
 void Trie::insert(char const* const str){
+    int currIndex =0;
+    char currChar;
+    
+    if (str[currIndex] == "\0"){
+        this->end_of_word = true;
+        return;
+    }
+  
+    //checks if currchar is alphabetical
+    while (!isalpha(str[currIndex])){
+        currIndex++;
+    }
+        
+        currChar = tolower(str[currIndex]);
+    
+    
+
+    if (roots[currChar - 'a'] == NULL){
+        roots[currChar - 'a'] = new Trie();
+    }
+    
+    char* nextStr = new char[strlen(str)-1];
+    for (int i=0;i<strlen(nextStr);i++){
+        nextStr[i] = str[i+1];
+    }
+    
+    roots[currChar - 'a']->insert(nextStr);
+
+    delete[] nextStr;
+   
+    
+
+    }
+    
+
     // Skip any characters that don't pass std::islower() after
     //  being put through std::tolower; they're not letters.
     // If you encounter a '\0', what flag should be set
@@ -38,9 +115,39 @@ void Trie::insert(char const* const str){
     // (Hint: This operation is easier if you use recursion.)
 
     // TODO: Fix this function
-}
+
 
 bool Trie::check(char const* const str) const{
+    int currIndex = 0;
+    char currChar;
+    
+
+    //base case
+    if ((str[currIndex] == "\0") &&(this->end_of_word == true)){
+        return true;
+    }
+    while (!isalpha(str[currIndex])){
+        currIndex++;
+    }
+
+    currChar = tolower(str[currIndex]);
+
+    if(roots[currChar - 'a'] == NULL){
+        return false;
+    }
+    char* nextStr = new char[strlen(str)-1];
+    for (int i=0;i<strlen(nextStr);i++){
+        nextStr[i] = str[i+1];
+    }
+
+    roots[currChar - 'a']->check(nextStr);
+
+    delete[] nextStr;
+
+    
+
+
+     
     // Iterate through the same way as you insert.
     // What should you check to determine whether the current point
     //  is the end of the input? When you get there, of course.
@@ -49,11 +156,15 @@ bool Trie::check(char const* const str) const{
     // (Hint: This operation is easier if you use recursion.)
 
     // TODO: Fix this stub
-    return false;
 }
 
 char* Trie::firstWithPrefix(char const* const str,unsigned depth) const{
-    // You'll need two paths to solve this problem:
+    
+    if (str
+
+
+
+   // You'll need two paths to solve this problem:
     
     // Case 1: You've used up all characters in str and are looking for
     //  the next stored input. Search depth-first in lexographic (a-z) order, 
