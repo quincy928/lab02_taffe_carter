@@ -17,9 +17,10 @@ Trie::Trie():end_of_word(false){
 }
 
 Trie::Trie(Trie const& other):end_of_word(other.end_of_word){
-    this->roots = new Trie();
+    
     for (int i=0; i<ALPHABET_SIZE; i++){
         if (other.roots[i] != NULL){
+            this->roots[i] = new Trie();
             this->roots[i] = other.roots[i];
         }
         else{
@@ -43,15 +44,16 @@ Trie& Trie::operator=(Trie const& other){
     if (this == &other){
         return *this;
     }
+
     //delete roots
     for (int i=0; i<ALPHABET_SIZE; i++){
         delete roots[i];
     }
     
     
-    this->roots = new Trie(other);
     for (int i=0; i<ALPHABET_SIZE;i++){
         if (other.roots[i] != NULL){
+            this->roots[i] = new Trie();
             this->roots[i] = other.roots[i];
         }
         else{
@@ -70,7 +72,7 @@ void Trie::insert(char const* const str){
     int currIndex =0;
     char currChar;
     
-    if (str[currIndex] == "\0"){
+    if (str[currIndex] == '\0'){
         this->end_of_word = true;
         return;
     }
@@ -123,7 +125,7 @@ bool Trie::check(char const* const str) const{
     
 
     //base case
-    if ((str[currIndex] == "\0") &&(this->end_of_word == true)){
+    if ((str[currIndex] == '\0') &&(this->end_of_word == true)){
         return true;
     }
     while (!isalpha(str[currIndex])){
@@ -136,6 +138,7 @@ bool Trie::check(char const* const str) const{
         return false;
     }
     char* nextStr = new char[strlen(str)-1];
+
     for (int i=0;i<strlen(nextStr);i++){
         nextStr[i] = str[i+1];
     }
@@ -145,7 +148,7 @@ bool Trie::check(char const* const str) const{
     delete[] nextStr;
 
     
-
+}
 
      
     // Iterate through the same way as you insert.
@@ -156,11 +159,9 @@ bool Trie::check(char const* const str) const{
     // (Hint: This operation is easier if you use recursion.)
 
     // TODO: Fix this stub
-}
+
 
 char* Trie::firstWithPrefix(char const* const str,unsigned depth) const{
-    
-    if (str
 
 
 
